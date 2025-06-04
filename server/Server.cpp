@@ -4,7 +4,7 @@
 #include <sys/socket.h>     
 #include <netinet/in.h>     
 #include <cstring>          
-
+#include <arpa/inet.h>
 
 // Class implementation of the Server.hpp file.
 
@@ -28,11 +28,43 @@ bool Server::start() {
 }
 
 void Server::run() {
-    return;
+    //main loop which runs while running is set to true.
+    while (running) {
+        // block unitl we accept a client or get an error
+        int client_fd = acceptClient();
+        if (client_fd == -1) {
+            std::cerr << "Connectin failed.\n";
+            continue; 
+        }
+
+
+        // At this point we are guaranteed client connection so we should print a quick message. 
+        std::cout << "Client successfully connected at FD: " << client_fd << "\n";
+
+
+        // Close client connection for now.
+        close(client_fd);
+        std::cout << "Closed client connection.\n";
+    }
 }
 
 int Server::acceptClient() {
-    return 0;
+    // accept() blocks until we recieve a client in the queue to which we can build a connection.
+    sockaddr_in addr; 
+    socklen_t len = sizeof(addr);
+    int client_fd = accept(server_fd, (sockaddr *) &addr, &len);
+
+    // If the connection failed send an error message
+    if (client_fd == -1) {
+        std::cerr << "Connection failed.\n";
+        return -1;
+    }
+
+    // Print the clients IP 
+    char str[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(addr.sin_addr), str, INET_ADDRSTRLEN);
+    std::cout << "Accepted client connection from: " << str << "\n";
+    return client_fd;
 }
 
 bool Server::setUpSocket() {
@@ -42,6 +74,7 @@ bool Server::setUpSocket() {
         std::cerr << "Socket creation failed.\n";
         return false;
     }
+
 
     // We now bind the socket to the corresponding port number. 
     // First we clear the memory at the location (so nothing is misplaced)

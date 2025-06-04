@@ -14,6 +14,7 @@ int main() {
         return 1;
     }
 
-    std::cout << "Server setup complete ... Exiting the Program.\n";
-    return 0;
+    std::cout << "Server setup complete ... Running the Program.\n";
+
+    server.run();
 }
