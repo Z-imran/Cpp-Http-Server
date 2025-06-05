@@ -41,6 +41,19 @@ void Server::run() {
         // At this point we are guaranteed client connection so we should print a quick message. 
         std::cout << "Client successfully connected at FD: " << client_fd << "\n";
 
+        // We must now recieve the request from the client. For now we will hard cap the limit 
+        // of the request to be  4096 bytes long but we can later change this or we can use a loop. 
+        char str[4096];
+
+        // If the recieve failed we should print an error message and then close the connection. 
+        // Else we should print out the client request so we can see what it loooks like. 
+        if (recv(client_fd, &str, 4096, 0) == -1) {
+            std::cerr << "unable to recieve request.\n";
+            break;
+        } else {
+            std::cout << "Client Request: " << str << "\n";
+        }
+
 
         // Close client connection for now.
         close(client_fd);
@@ -89,7 +102,8 @@ bool Server::setUpSocket() {
     
     // If the Binding fails we exit the socket creation. 
     if (bind(server_fd, (sockaddr *) &addr, sizeof(addr)) == -1) {
-        std::cerr << "Bind failed.\n";
+        std::cerr << "Bind failed.\n" << "Error No: " << errno << " : " << strerror(errno) << "\n";
+        perror("bind");
         return false;
     }
 

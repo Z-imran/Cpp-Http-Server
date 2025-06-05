@@ -13,6 +13,15 @@
 - POSIX Sockets
 
 
+### ChangeLog
+- Created basic Server that upon program run creates a socket and binds to the port and is set to listen. 
+- Aded the ability for ther server to accept a client and recieve a request. 
+- TODO: Add parsing of the request. <<EXPAND ON THE CHANGELOG LATER>>
+
+
+### Bugs
+- Upon making the build using Cmake on the first iteration of running the program the project works fine. However upon repeated attempts to run the project the server bind process fails which then closes the Program. Suggested fix: the error appears to be an address already in use case. So change the socket flag to be SO_REUSEADDR. 
+
 ### Resources
 Below are some resources used to help make programming easier. 
 - https://man7.org/linux/man-pages/dir_section_2.html
