@@ -88,6 +88,9 @@ bool Server::setUpSocket() {
         return false;
     }
 
+    // Set the socket to use the flag SO_REUSEADDR so we dont have issues with the port number binding. 
+    int optval = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)); 
 
     // We now bind the socket to the corresponding port number. 
     // First we clear the memory at the location (so nothing is misplaced)
