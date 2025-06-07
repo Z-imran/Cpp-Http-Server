@@ -47,12 +47,27 @@ void Server::run() {
 
         // If the recieve failed we should print an error message and then close the connection. 
         // Else we should print out the client request so we can see what it loooks like. 
-        if (recv(client_fd, &str, 4096, 0) == -1) {
+        // We use a while loop to make sure that the entire request is recieved without any issues. 
+        int bytes;
+        std::string direct_request;
+        do {
+            bytes = recv(client_fd, &str, 4096, 0);
+
+            // If the recv produced an error break the loop. 
+            if (bytes == -1) {
             std::cerr << "unable to recieve request.\n";
             break;
-        } else {
-            std::cout << "Client Request: " << str << "\n";
-        }
+            } 
+            direct_request.append(str);
+
+            // If the string has reached the end exit the loop.
+            if (direct_request.find("\r\n\r\n") != std::string::npos) {
+                break;
+            }
+
+        } while (bytes > 0);
+
+        std::cout << "Client Request: " << direct_request << "\n";
 
 
         // Close client connection for now.
