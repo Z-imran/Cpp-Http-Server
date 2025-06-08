@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(httpserver 
     main.cpp
     server/Server.cpp
+    server/Request.cpp
     )
 
 include_directories(

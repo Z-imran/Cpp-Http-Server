@@ -5,6 +5,7 @@
 #include <netinet/in.h>     
 #include <cstring>          
 #include <arpa/inet.h>
+#include "Request.hpp"
 
 // Class implementation of the Server.hpp file.
 
@@ -49,7 +50,7 @@ void Server::run() {
         // Else we should print out the client request so we can see what it loooks like. 
         // We use a while loop to make sure that the entire request is recieved without any issues. 
         int bytes;
-        std::string direct_request;
+        std::string raw_request;
         do {
             bytes = recv(client_fd, &str, 4096, 0);
 
@@ -58,17 +59,25 @@ void Server::run() {
             std::cerr << "unable to recieve request.\n";
             break;
             } 
-            direct_request.append(str);
+            raw_request.append(str);
 
             // If the string has reached the end exit the loop.
-            if (direct_request.find("\r\n\r\n") != std::string::npos) {
+            if (raw_request.find("\r\n\r\n") != std::string::npos) {
                 break;
             }
 
         } while (bytes > 0);
 
-        std::cout << "Client Request: " << direct_request << "\n";
+        std::cout << "Client Request: " << raw_request << "\n";
 
+        Request parsed_request = parseRequest(raw_request);
+
+        std::cout << parsed_request.method << "\n";
+        std::cout << parsed_request.path << "\n";
+        std::cout << parsed_request.version << "\n";
+        for (const std::pair<const std::string, std::string>& pair : parsed_request.headers) {
+            std::cout << pair.first << ": " << pair.second << "\n";
+        }
 
         // Close client connection for now.
         close(client_fd);

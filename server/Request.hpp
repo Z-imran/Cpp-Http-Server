@@ -26,9 +26,9 @@ struct Request {
  * 
  * @return Returns a complete Request Struct that contains all necessary information. (body May be Empty in GET). 
  */
-Request parseRequest(std::string& raw_request); 
+Request parseRequest(const std::string& raw_request); 
 
 
 
 
-#endif REQUEST_UNIQUE
+#endif 
