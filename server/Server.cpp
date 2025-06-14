@@ -6,6 +6,8 @@
 #include <cstring>          
 #include <arpa/inet.h>
 #include "Request.hpp"
+#include "Exceptions/EmptyException.hpp"
+#include "Exceptions/MalformedException.hpp"
 
 // Class implementation of the Server.hpp file.
 
@@ -68,16 +70,28 @@ void Server::run() {
 
         } while (bytes > 0);
 
+        // Should the request string be empty for some reason the connection should be closed. 
+
         std::cout << "Client Request: " << raw_request << "\n";
-
-        Request parsed_request = parseRequest(raw_request);
-
+        Request parsed_request;
+        try {
+            parsed_request = parseRequest(raw_request);
+        } catch(const EmptyRequest& e) {
+            std::cerr << e.what();
+            close(client_fd);
+            continue;
+        } catch(const MalformedRequest& e) {
+            std::cerr << e.what();
+            close(client_fd);
+            continue;
+        }
         std::cout << parsed_request.method << "\n";
         std::cout << parsed_request.path << "\n";
         std::cout << parsed_request.version << "\n";
         for (const std::pair<const std::string, std::string>& pair : parsed_request.headers) {
             std::cout << pair.first << ": " << pair.second << "\n";
         }
+        std::cout << parsed_request.body << "\n";
 
         // Close client connection for now.
         close(client_fd);
