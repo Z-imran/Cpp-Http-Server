@@ -76,11 +76,14 @@ TEST(RequestTest, NoLineEnding) {
 
 // Test that valid requests are correctly handled. 
 TEST(RequestTest, Valid) {
-    std::string valid =  "GET /hello HTTP/1.1"
-                         "Host: localhost:8080"
-                         "User-Agent: curl/8.7.1"
-                         "Accept: */*";
+    std::string valid =  "GET /hello HTTP/1.1\r\n"
+                         "Host: localhost:8080\r\n"
+                         "User-Agent: curl/8.7.1\r\n"
+                         "Accept: */*\r\n"
+                         "\r\n";
     Request req = parseRequest(valid);
+
+
     EXPECT_EQ(req.method, "GET");
     EXPECT_EQ(req.path, "/hello");
     EXPECT_EQ(req.version, "HTTP/1.1");
