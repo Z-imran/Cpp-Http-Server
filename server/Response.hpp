@@ -31,10 +31,14 @@ class Response {
      * @brief Builds the response object based on the input request. 
      * 
      * Makes the response object contain the correct values for the corresponding variables. Uses a map for common status codes. 
-     * If the status code is not common defaults to generic message. 
+     * If the status code is not common defaults to generic message. <<CONSIDER ADDING HEADERS>>
+     * 
+     * @param status_code sets the status code of the Response to be the same. 
+     * @param body sets the body of the response to contain the resulting message. 
+     * @param type contains the MIME type of the response. 
      * 
      */
-    Response buildResponse();
+    Response buildResponse(int status_code, const std::string& body, const std::string type);
 
 
     /**

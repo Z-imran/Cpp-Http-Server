@@ -21,7 +21,7 @@ struct Request {
 /**
  * @brief Parses raw Request. 
  * 
- * Recieves a string that is the raw reqeust of the client. The parses the string into a Request struct. 
+ * Recieves a string that is the raw request of the client. The parses the string into a Request struct. 
  * 
  * @param raw_request the raw unparse request recieved form the client. 
  * 
@@ -30,6 +30,17 @@ struct Request {
 Request parseRequest(const std::string& raw_request); 
 
 
+/**
+ * @brief Gets MIME type.
+ * 
+ * Parses the Requests path to get the MIME type. Should the MIME type not be a valid type it defaults to text. 
+ * 
+ * @param path the Requests path variable containing the MIME type extension if a valid request. 
+ * 
+ * @return Returns a string that contains the correct MIME type. 
+ */
+
+std::string getMimeType(const std::string& path);
 
 
 #endif 

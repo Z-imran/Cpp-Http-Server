@@ -6,8 +6,6 @@
 
 // Tests for the parsing of the incoming request after establishing client-server connection. 
 
-
-
 // Tests that we throw an EmptyRequest Exception upon an empty string. 
 TEST(RequestTest, EmptyRequest) {
     std::string  empty = "";
@@ -91,4 +89,23 @@ TEST(RequestTest, Valid) {
     EXPECT_EQ(req.headers["User-Agent"], " curl/8.7.1");
     EXPECT_EQ(req.headers["Accept"], " */*");
     EXPECT_EQ(req.body, "");
+}
+
+
+// Tests for the recieving of the MIME types 
+
+TEST(RequestsTest, ValidMIMETypes) {
+    EXPECT_EQ(getMimeType("/file.html"), "text/html");
+    EXPECT_EQ(getMimeType("/file.css"), "text/css");
+    EXPECT_EQ(getMimeType("/file.js"), "application/javascript");
+    EXPECT_EQ(getMimeType("/file.png"), "image/png");
+    EXPECT_EQ(getMimeType("/file.pdf"), "application/pdf");
+    EXPECT_EQ(getMimeType("/file1/file2/main.main.js"), "application/javascript");
+}
+
+TEST(RequestTest, MalformedTypes) {
+    EXPECT_EQ(getMimeType("/"), "text/html");
+    EXPECT_EQ(getMimeType("/missingext"), "text/html");
+    EXPECT_EQ(getMimeType("/...."), "text/html");
+    EXPECT_EQ(getMimeType("/.mp3"), "text/html");
 }

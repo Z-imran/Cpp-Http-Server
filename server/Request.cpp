@@ -79,3 +79,8 @@ Request parseRequest(const std::string& raw_request) {
     return parsed;
         
 }
+
+
+std::string getMimeType(const std::string& path) {
+    return "";
+}
