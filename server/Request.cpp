@@ -82,5 +82,20 @@ Request parseRequest(const std::string& raw_request) {
 
 
 std::string getMimeType(const std::string& path) {
-    return "";
+    std::unordered_map<std::string, std::string> mime_types = 
+    { {"html", "text/html"},
+      {"css", "text/css"},
+      {"jpg", "image/jpeg"},
+      {"png", "image/png"},
+      {"jpeg", "image/jpeg"},
+      {"js", "application/javascript"},
+      {"json", "application/json"},
+      {"pdf", "application/pdf"} };
+
+    std::string extension = path.substr(path.find_last_of(".") + 1);
+
+    if (mime_types.find(extension) != mime_types.end()) {
+        return mime_types.find(extension)->second;
+    } 
+    return "text/html";
 }
