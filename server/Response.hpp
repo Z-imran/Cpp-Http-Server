@@ -34,11 +34,12 @@ class Response {
      * If the status code is not common defaults to generic message. <<CONSIDER ADDING HEADERS>>
      * 
      * @param status_code sets the status code of the Response to be the same. 
+     * @param msg is the corresponsfing status message. 
      * @param body sets the body of the response to contain the resulting message. 
      * @param type contains the MIME type of the response. 
      * 
      */
-    Response buildResponse(int status_code, const std::string& body, const std::string type);
+    Response buildResponse(int status_code,const std::string& msg,  const std::string& body, const std::string type);
 
 
     /**
