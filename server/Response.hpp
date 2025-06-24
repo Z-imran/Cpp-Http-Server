@@ -1,5 +1,6 @@
 #include <string>
 #include <unordered_map>
+#include <sstream>
 #include "Request.hpp"
 #ifndef RESPONSE_UNIQUE
 #define RESPONSE_UNIQUE
@@ -45,7 +46,8 @@ class Response {
     /**
      * @brief Converts the Response into a valid string for HTTP repsonse. 
      * 
-     * Formats a string to be a valid HTTP response. 
+     * Formats a string to be a valid HTTP response. Will always format based on the response struct so on a non built response
+     * this will make an empty string
      */
     std::string toHTTP();
 };

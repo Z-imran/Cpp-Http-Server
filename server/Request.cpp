@@ -92,6 +92,9 @@ std::string getMimeType(const std::string& path) {
       {"json", "application/json"},
       {"pdf", "application/pdf"} };
 
+    if (path.find_last_of(".") == std::string::npos) {
+        return "text/html";
+    }
     std::string extension = path.substr(path.find_last_of(".") + 1);
 
     if (mime_types.find(extension) != mime_types.end()) {

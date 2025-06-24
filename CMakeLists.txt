@@ -9,6 +9,7 @@ add_executable(httpserver
     main.cpp
     server/Server.cpp
     server/Request.cpp
+    server/Response.cpp
     )
 
 include_directories(

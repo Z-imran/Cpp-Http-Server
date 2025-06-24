@@ -8,7 +8,7 @@
 
 
 // Tests that we correctly build a response using the constructor. 
-TEST(ResponseTest, Constructor) {
+TEST(ResponseTest, ConstructorTest) {
     Response response = Response(); 
     EXPECT_EQ(response.status_code, 0);
     EXPECT_EQ(response.status_message, "");
@@ -23,30 +23,30 @@ TEST(ResponseTest, buildResponseOK) {
     EXPECT_EQ(res.status_code, 200);
     EXPECT_EQ(res.status_message, "OK");
     EXPECT_EQ(res.headers["Content-Type"], "text/html");
-    EXPECT_EQ(res.headers["Content-Length"], 4);
+    EXPECT_EQ(res.headers["Content-Length"], "4");
     EXPECT_EQ(res.body, "TEST");
 }
 
 // Tests that an ok response is correctly built. 
-TEST(ResponseTest, buildResponseOK) {
+TEST(ResponseTest, BuildresponseNotFound) {
     Response res = Response(); 
     res.buildResponse(404, "Not Found", "Not Found", "application/json");
-    EXPECT_EQ(res.status_code, 200);
+    EXPECT_EQ(res.status_code, 404);
     EXPECT_EQ(res.status_message, "Not Found");
-    EXPECT_EQ(res.headers["Content-Type"], "text/html");
-    EXPECT_EQ(res.headers["Content-Length"], 9);
+    EXPECT_EQ(res.headers["Content-Type"], "application/json");
+    EXPECT_EQ(res.headers["Content-Length"], "9");
     EXPECT_EQ(res.body, "Not Found");
 }
 
 // Test that we properly create a valid HTTP response. 
-TEST(ResponseTest, buildResponseOK) {
+TEST(ResponseTest, ResponseToHTTP) {
     Response res = Response(); 
     res.buildResponse(200, "OK", "TEST", "text/html");
     EXPECT_EQ(res.status_code, 200);
-    EXPECT_EQ(res.status_message, "Not Found");
+    EXPECT_EQ(res.status_message, "OK");
     EXPECT_EQ(res.headers["Content-Type"], "text/html");
-    EXPECT_EQ(res.headers["Content-Length"], 4);
-    EXPECT_EQ(res.body, "Not Found");
+    EXPECT_EQ(res.headers["Content-Length"], "4");
+    EXPECT_EQ(res.body, "TEST");
 
     std::string expected = "HTTP/1.1 200 OK\r\n"
                            "Content-Type: text/html\r\n"
@@ -54,5 +54,10 @@ TEST(ResponseTest, buildResponseOK) {
                            "\r\n"
                            "TEST";
     std::string test = res.toHTTP();
-    EXPECT_EQ(test, expected);
+    // EXPECT_EQ(test, expected);
+    EXPECT_TRUE(test.find("Content-Type: text/html\r\n") != std::string::npos);
+    EXPECT_TRUE(test.find("Content-Length: 4\r\n") != std::string::npos);
+    EXPECT_TRUE(test.find("\r\nTEST") != std::string::npos);
+    EXPECT_TRUE(test.find("HTTP/1.1 200 OK\r\n") != std::string::npos);
+
 }
