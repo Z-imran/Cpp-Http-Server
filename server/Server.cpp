@@ -161,3 +161,7 @@ bool Server::setUpSocket() {
     return true;
     
 }
+
+Response Server::handleRequest(const Request& req) {
+    return Response();
+}

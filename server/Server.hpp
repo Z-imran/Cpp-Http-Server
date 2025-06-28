@@ -1,3 +1,4 @@
+#include "Response.hpp"
 #ifndef SERVER_UNIQUE
 #define SERVER_UNIQUE
 
@@ -45,6 +46,18 @@ class Server {
      * @return returns the client socket id. 
      */
     int acceptClient();
+
+
+    /**
+     * @brief handles the request and does the action based on the method. 
+     * 
+     * Based of the corresponding method produced from parseRequest this function does the action. 
+     * Should the request be malformed the response should be error code 400 (BAD_REQUEST).
+     * 
+     * @param req is the intake request parsed from the clients request string. 
+     * @return returns a response object that containing the corresponding response information. 
+     */
+    Response handleRequest(const Request& req);
 
     // deletes any copies and assignments to make sure that the server has only one point of entry. 
     Server(const Server&) = delete;
