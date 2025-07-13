@@ -174,7 +174,7 @@ Response Server::handleRequest(const Request& req) {
         return readFile(req.path);
     } 
     else if (req.method == "HEAD") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+        return headersOfFile(req.path);
     } 
     else if (req.method == "PUT") {
         return putFile(req.path, req.body);
@@ -223,4 +223,10 @@ Response Server::showOptions() {
     Response resp;
     resp.buildResponse(200, "OK", "Showing Options", "text/html");
     return resp.addHeader("Allow", "GET, PUT, DELETE, OPTIONS, HEAD");
+}
+
+Response Server::headersOfFile(const std::string& path) {
+    Response resp = readFile(path);
+    resp.body = "";
+    return resp;
 }

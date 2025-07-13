@@ -92,6 +92,17 @@ class Server {
      */
     Response showOptions();
 
+        /**
+     * @brief Sends the headers of the File. 
+     * 
+     * shows the headers of the file based of the provided path. if the path is empty or invalid then we create an
+     * invalid response 404 stating "File Not Found". 
+     * 
+     * @param path is the intake path provided by req.path. 
+     * @return returns a response object. 
+     */
+    Response headersOfFile(const std::string& path);
+
 
     // deletes any copies and assignments to make sure that the server has only one point of entry. 
     Server(const Server&) = delete;

@@ -27,7 +27,7 @@ Response Response::buildResponse(int status_code,const std::string& msg,  const 
 
 
 std::string Response::toHTTP() {
-    if (status_code == 0 || status_message == "" || headers.empty() || body == "") {
+    if (status_code == 0 || status_message == "" || headers.empty()) {
         std::string body = "Unable to build a response";
         std::ostringstream basic; 
         basic <<  "HTTP/1.1 500 Internal Server Error\r\n";
