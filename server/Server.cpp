@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include <iostream>
+#include <fstream>
 #include <unistd.h>         
 #include <sys/socket.h>     
 #include <netinet/in.h>     
@@ -93,6 +94,11 @@ void Server::run() {
         }
         std::cout << parsed_request.body << "\n";
 
+        Response resp = handleRequest(parsed_request);
+        std::string http_resp = resp.toHTTP();
+        write(client_fd, http_resp.c_str(), http_resp.size());
+
+
         // Close client connection for now.
         close(client_fd);
         std::cout << "Closed client connection.\n";
@@ -163,5 +169,53 @@ bool Server::setUpSocket() {
 }
 
 Response Server::handleRequest(const Request& req) {
-    return Response();
+    // Consider Checking for valid request. (maybe a requestValidation function).
+    if (req.method == "GET") {
+        return readFile(req.path);
+    } 
+    else if (req.method == "HEAD") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else if (req.method == "POST") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");;
+    } 
+    else if (req.method == "PUT") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else if (req.method == "DELETE") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else if (req.method == "CONNECT") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else if (req.method == "OPTIONS") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else if (req.method == "TRACE") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else if (req.method == "PATCH") {
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+    } 
+    else {
+        return Response().buildResponse(500, "Internal Server Error", "Invalid Request Method", "text/html");
+    }
+}
+
+Response Server::readFile(const std::string& path) {
+    std::ifstream file("../public" + path, std::ios::binary);
+    Response resp;
+    if (!file) {
+        std::cout << "Could not open file.\n";
+        resp.buildResponse(404, "Not Found", "File Not Found", "text/html");
+    }
+
+    std::stringstream s;
+    s << file.rdbuf();
+    std::string body = s.str();
+    std::cout << "Read file of size: " << body.size() << "\n";
+    std::string mime = getMimeType(path);
+    std::cout << "Determined MIME type: " << mime << "\n";
+    return resp.buildResponse(200, "OK", body, mime);
+
 }

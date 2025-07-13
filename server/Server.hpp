@@ -59,6 +59,17 @@ class Server {
      */
     Response handleRequest(const Request& req);
 
+    /**
+     * @brief Reads the file based of provided path. 
+     * 
+     * Reads the file based of the provided path. if the path is empty or invalid then we create an
+     * invalid response 404 stating "File Not Found". 
+     * 
+     * @param path is the intake path provided by request. 
+     * @return returns a response object. 
+     */
+    Response readFile(const std::string& path);
+
     // deletes any copies and assignments to make sure that the server has only one point of entry. 
     Server(const Server&) = delete;
     Server& operator=(const Server&) = delete;
