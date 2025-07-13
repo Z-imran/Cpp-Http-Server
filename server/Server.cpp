@@ -62,7 +62,7 @@ void Server::run() {
             std::cerr << "unable to recieve request.\n";
             break;
             } 
-            raw_request.append(str);
+            raw_request.append(str, bytes);
 
             // If the string has reached the end exit the loop.
             if (raw_request.find("\r\n\r\n") != std::string::npos) {
@@ -177,10 +177,10 @@ Response Server::handleRequest(const Request& req) {
         return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
     } 
     else if (req.method == "POST") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");;
+        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
     } 
     else if (req.method == "PUT") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+        return putFile(req.path, req.body);
     } 
     else if (req.method == "DELETE") {
         return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
@@ -218,4 +218,15 @@ Response Server::readFile(const std::string& path) {
     std::cout << "Determined MIME type: " << mime << "\n";
     return resp.buildResponse(200, "OK", body, mime);
 
+}
+
+Response Server::putFile(const std::string& path, const std::string& body) {
+    std::ofstream file("../public" + path, std::ios::binary);
+    Response resp;
+    if (!file) {
+        resp.buildResponse(500, "Internal Server Error", "Failed To Write File", "text/html");
+    }
+
+    file << body;
+    return resp.buildResponse(200, "File Created", "Created File", "text/html");
 }

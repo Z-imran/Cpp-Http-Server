@@ -65,10 +65,22 @@ class Server {
      * Reads the file based of the provided path. if the path is empty or invalid then we create an
      * invalid response 404 stating "File Not Found". 
      * 
-     * @param path is the intake path provided by request. 
+     * @param path is the intake path provided by req.path. 
      * @return returns a response object. 
      */
     Response readFile(const std::string& path);
+
+    /**
+     * @brief places the file into the public directory. 
+     * 
+     * Places the file into public folder and currently replaces the file if it already exists. 
+     * produces response with error 500, "Internal Server Error" on failure of the PUT. 
+     * 
+     * @param path is the intake path provided by req.path. 
+     * @param body is the intake file provided by req.body. 
+     * @return returns a response object. 
+     */
+    Response putFile(const std::string& path, const std::string& body);
 
     // deletes any copies and assignments to make sure that the server has only one point of entry. 
     Server(const Server&) = delete;
