@@ -50,6 +50,17 @@ class Response {
      * this will make an empty string
      */
     std::string toHTTP();
+
+    /**
+     * @brief Adds a Key/Value pair into the headers.
+     * 
+     * Sets the key of the new pair to be the specified key value and the value as provided.
+     *  
+     * @param key The key of the header map pair.
+     * @param value the value of the header map pair.
+     * @return The response object. 
+     */
+    Response addHeader(const std::string& key, const std::string& value);
 };
 
 

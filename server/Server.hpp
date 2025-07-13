@@ -82,6 +82,17 @@ class Server {
      */
     Response putFile(const std::string& path, const std::string& body);
 
+    /** 
+     * @brief shows the options available for requests to the server. 
+     * 
+     * Creates a response object that contains an additional header with the available options based
+     * off the OPTIONS method. 
+     * 
+     * @return returns a resposne object. 
+     */
+    Response showOptions();
+
+
     // deletes any copies and assignments to make sure that the server has only one point of entry. 
     Server(const Server&) = delete;
     Server& operator=(const Server&) = delete;

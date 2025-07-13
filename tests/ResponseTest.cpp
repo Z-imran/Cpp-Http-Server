@@ -28,7 +28,7 @@ TEST(ResponseTest, buildResponseOK) {
 }
 
 // Tests that an ok response is correctly built. 
-TEST(ResponseTest, BuildresponseNotFound) {
+TEST(ResponseTest, BuildResponseNotFound) {
     Response res = Response(); 
     res.buildResponse(404, "Not Found", "Not Found", "application/json");
     EXPECT_EQ(res.status_code, 404);
@@ -39,7 +39,7 @@ TEST(ResponseTest, BuildresponseNotFound) {
 }
 
 // Test that we properly create a valid HTTP response. 
-TEST(ResponseTest, ResponseToHTTP) {
+TEST(ResponseTest, responseToHTTP) {
     Response res = Response(); 
     res.buildResponse(200, "OK", "TEST", "text/html");
     EXPECT_EQ(res.status_code, 200);
@@ -54,10 +54,22 @@ TEST(ResponseTest, ResponseToHTTP) {
                            "\r\n"
                            "TEST";
     std::string test = res.toHTTP();
-    // EXPECT_EQ(test, expected);
     EXPECT_TRUE(test.find("Content-Type: text/html\r\n") != std::string::npos);
     EXPECT_TRUE(test.find("Content-Length: 4\r\n") != std::string::npos);
     EXPECT_TRUE(test.find("\r\nTEST") != std::string::npos);
     EXPECT_TRUE(test.find("HTTP/1.1 200 OK\r\n") != std::string::npos);
 
+}
+
+
+TEST(ResponseTest, addHeader) {
+    Response res = Response(); 
+    res.buildResponse(200, "OK", "TEST", "text/html");
+    res.addHeader("test", "testval");
+    EXPECT_EQ(res.status_code, 200);
+    EXPECT_EQ(res.status_message, "OK");
+    EXPECT_EQ(res.headers["Content-Type"], "text/html");
+    EXPECT_EQ(res.headers["Content-Length"], "4");
+    EXPECT_EQ(res.headers["test"], "testval");
+    EXPECT_EQ(res.body, "TEST");
 }

@@ -44,3 +44,8 @@ std::string Response::toHTTP() {
 
     return http.str();
 }
+
+Response Response::addHeader(const std::string& key, const std::string& value) {
+    this->headers[key] = value;
+    return *this;
+}

@@ -176,26 +176,14 @@ Response Server::handleRequest(const Request& req) {
     else if (req.method == "HEAD") {
         return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
     } 
-    else if (req.method == "POST") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
-    } 
     else if (req.method == "PUT") {
         return putFile(req.path, req.body);
     } 
     else if (req.method == "DELETE") {
         return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
     } 
-    else if (req.method == "CONNECT") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
-    } 
     else if (req.method == "OPTIONS") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
-    } 
-    else if (req.method == "TRACE") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
-    } 
-    else if (req.method == "PATCH") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+        return showOptions();
     } 
     else {
         return Response().buildResponse(500, "Internal Server Error", "Invalid Request Method", "text/html");
@@ -229,4 +217,10 @@ Response Server::putFile(const std::string& path, const std::string& body) {
 
     file << body;
     return resp.buildResponse(200, "File Created", "Created File", "text/html");
+}
+
+Response Server::showOptions() {
+    Response resp;
+    resp.buildResponse(200, "OK", "Showing Options", "text/html");
+    return resp.addHeader("Allow", "GET, PUT, DELETE, OPTIONS, HEAD");
 }
