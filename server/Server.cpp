@@ -180,7 +180,7 @@ Response Server::handleRequest(const Request& req) {
         return putFile(req.path, req.body);
     } 
     else if (req.method == "DELETE") {
-        return Response().buildResponse(500, "Internal Server Error", "Request Method Not Built", "text/html");
+        return deleteFile(req.path);
     } 
     else if (req.method == "OPTIONS") {
         return showOptions();
@@ -229,4 +229,13 @@ Response Server::headersOfFile(const std::string& path) {
     Response resp = readFile(path);
     resp.body = "";
     return resp;
+}
+
+Response Server::deleteFile(const std::string& path) {
+    Response resp;
+    if (std::filesystem::remove("../public" + path)) {
+        return resp.buildResponse(200, "OK", "Deleted File: " + path, "text/html");
+    } else {
+        return resp.buildResponse(404, "Not Found", "File Not Found", "text/html");
+    }
 }
