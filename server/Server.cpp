@@ -37,7 +37,7 @@ void Server::run() {
         // block unitl we accept a client or get an error
         int client_fd = acceptClient();
         if (client_fd == -1) {
-            std::cerr << "Connectin failed.\n";
+            std::cerr << "Connection failed.\n";
             continue; 
         }
 
@@ -231,6 +231,7 @@ Response Server::headersOfFile(const std::string& path) {
     return resp;
 }
 
+// https://stackoverflow.com/questions/43440246/how-to-delete-a-file-in-file-handling-in-c
 Response Server::deleteFile(const std::string& path) {
     Response resp;
     if (std::filesystem::remove("../public" + path)) {
