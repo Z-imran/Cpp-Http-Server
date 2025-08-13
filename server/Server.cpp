@@ -15,7 +15,7 @@
 
 
 Server::Server(int port):
-    port(port), server_fd(-1), running(false), threadpool(5) {}
+    port(port), server_fd(-1), running(false), threadpool(10) {}
 
 Server::~Server() {
     threadpool.~ThreadPool();
@@ -97,7 +97,7 @@ bool Server::setUpSocket() {
 
     // We now set the corresponding socket to listen. 
     // If we fail to mark the socket as listening we fail. 
-    if (listen(server_fd, 10) == -1) {
+    if (listen(server_fd, 100) == -1) {
         std::cerr << "Listen failed.\n";
         return false;
     }
