@@ -3,6 +3,7 @@ add_executable(run_tests
     ResponseTest.cpp
     ../server/Request.cpp
     ../server/Response.cpp
+    ../server/ThreadPool.cpp
 )
 
 target_link_libraries(run_tests

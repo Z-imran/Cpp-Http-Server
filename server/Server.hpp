@@ -1,4 +1,5 @@
 #include "Response.hpp"
+#include "ThreadPool.hpp"
 #ifndef SERVER_UNIQUE
 #define SERVER_UNIQUE
 
@@ -123,6 +124,7 @@ class Server {
     int port; 
     int server_fd; 
     bool running; 
+    ThreadPool threadpool;
     
     /**
      * @brief Sets up the socket. 
@@ -132,6 +134,8 @@ class Server {
      * @return true if socket was created properly, false if otherwise. 
      */
     bool setUpSocket(); 
+
+    void handleClient(int client_fd);
 
 };
 

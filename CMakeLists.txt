@@ -10,6 +10,7 @@ add_executable(httpserver
     server/Server.cpp
     server/Request.cpp
     server/Response.cpp
+    server/ThreadPool.cpp
     )
 
 include_directories(

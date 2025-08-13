@@ -9,17 +9,16 @@
 #include "Request.hpp"
 #include "Exceptions/EmptyException.hpp"
 #include "Exceptions/MalformedException.hpp"
+#include "ThreadPool.hpp"
 
 // Class implementation of the Server.hpp file.
 
 
-Server::Server(int port) { 
-    this->port = port;
-    server_fd = -1;
-    running = false; 
-}
+Server::Server(int port):
+    port(port), server_fd(-1), running(false), threadpool(5) {}
 
 Server::~Server() {
+    threadpool.~ThreadPool();
     // Check if socket has been assigned if assigned close the socket.
     if (server_fd != -1) {
         close(server_fd);
@@ -41,67 +40,9 @@ void Server::run() {
             continue; 
         }
 
-
-        // At this point we are guaranteed client connection so we should print a quick message. 
-        std::cout << "Client successfully connected at FD: " << client_fd << "\n";
-
-        // We must now recieve the request from the client. For now we will hard cap the limit 
-        // of the request to be  4096 bytes long but we can later change this or we can use a loop. 
-        char str[4096];
-
-        // If the recieve failed we should print an error message and then close the connection. 
-        // Else we should print out the client request so we can see what it loooks like. 
-        // We use a while loop to make sure that the entire request is recieved without any issues. 
-        int bytes;
-        std::string raw_request;
-        do {
-            bytes = recv(client_fd, &str, 4096, 0);
-
-            // If the recv produced an error break the loop. 
-            if (bytes == -1) {
-            std::cerr << "unable to recieve request.\n";
-            break;
-            } 
-            raw_request.append(str, bytes);
-
-            // If the string has reached the end exit the loop.
-            if (raw_request.find("\r\n\r\n") != std::string::npos) {
-                break;
-            }
-
-        } while (bytes > 0);
-
-        // Should the request string be empty for some reason the connection should be closed. 
-
-        std::cout << "Client Request: " << raw_request << "\n";
-        Request parsed_request;
-        try {
-            parsed_request = parseRequest(raw_request);
-        } catch(const EmptyRequest& e) {
-            std::cerr << e.what();
-            close(client_fd);
-            continue;
-        } catch(const MalformedRequest& e) {
-            std::cerr << e.what();
-            close(client_fd);
-            continue;
-        }
-        std::cout << parsed_request.method << "\n";
-        std::cout << parsed_request.path << "\n";
-        std::cout << parsed_request.version << "\n";
-        for (const std::pair<const std::string, std::string>& pair : parsed_request.headers) {
-            std::cout << pair.first << ": " << pair.second << "\n";
-        }
-        std::cout << parsed_request.body << "\n";
-
-        Response resp = handleRequest(parsed_request);
-        std::string http_resp = resp.toHTTP();
-        write(client_fd, http_resp.c_str(), http_resp.size());
-
-
-        // Close client connection for now.
-        close(client_fd);
-        std::cout << "Closed client connection.\n";
+        threadpool.enqueue([this, client_fd] {
+            this->handleClient(client_fd);
+        });
     }
 }
 
@@ -239,4 +180,68 @@ Response Server::deleteFile(const std::string& path) {
     } else {
         return resp.buildResponse(404, "Not Found", "File Not Found", "text/html");
     }
+}
+
+
+void Server::handleClient(int client_fd) {
+            // At this point we are guaranteed client connection so we should print a quick message. 
+        std::cout << "Client successfully connected at FD: " << client_fd << "\n";
+
+        // We must now recieve the request from the client. For now we will hard cap the limit 
+        // of the request to be  4096 bytes long but we can later change this or we can use a loop. 
+        char str[4096];
+
+        // If the recieve failed we should print an error message and then close the connection. 
+        // Else we should print out the client request so we can see what it loooks like. 
+        // We use a while loop to make sure that the entire request is recieved without any issues. 
+        int bytes;
+        std::string raw_request;
+        do {
+            bytes = recv(client_fd, &str, 4096, 0);
+
+            // If the recv produced an error break the loop. 
+            if (bytes == -1) {
+            std::cerr << "unable to recieve request.\n";
+                break;
+            } 
+            raw_request.append(str, bytes);
+
+            // If the string has reached the end exit the loop.
+            if (raw_request.find("\r\n\r\n") != std::string::npos) {
+                break;
+            }
+
+        } while (bytes > 0);
+
+        // Should the request string be empty for some reason the connection should be closed. 
+
+        std::cout << "Client Request: " << raw_request << "\n";
+        Request parsed_request;
+        try {
+            parsed_request = parseRequest(raw_request);
+        } catch(const EmptyRequest& e) {
+            std::cerr << e.what();
+            close(client_fd);
+            return;
+        } catch(const MalformedRequest& e) {
+            std::cerr << e.what();
+            close(client_fd);
+            return;
+        }
+        std::cout << parsed_request.method << "\n";
+        std::cout << parsed_request.path << "\n";
+        std::cout << parsed_request.version << "\n";
+        for (const std::pair<const std::string, std::string>& pair : parsed_request.headers) {
+            std::cout << pair.first << ": " << pair.second << "\n";
+        }
+        std::cout << parsed_request.body << "\n";
+
+        Response resp = handleRequest(parsed_request);
+        std::string http_resp = resp.toHTTP();
+        write(client_fd, http_resp.c_str(), http_resp.size());
+
+
+        // Close client connection for now.
+        close(client_fd);
+        std::cout << "Closed client connection.\n";
 }
