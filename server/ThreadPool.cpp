@@ -14,16 +14,7 @@ ThreadPool::ThreadPool(size_t numThreads) {
 
 // Destructor for ThreadPool. This joins all the threads and then sestroys the 
 ThreadPool::~ThreadPool() {
-    {
-        std::unique_lock<std::mutex> lock(mx);
-        running = false;
-    }
-    cond.notify_all();
-    for (auto& t : threads) {
-        if (t.joinable()) {
-            t.join();
-        }
-    }
+    threadpoolJoin();
 }
 
 void ThreadPool::enqueue(std::function<void ()> task) {
@@ -35,7 +26,24 @@ void ThreadPool::enqueue(std::function<void ()> task) {
 }
 
 void ThreadPool::threadpoolJoin() {
-    // Not Sure
+    std::unique_lock<std::mutex> lock(mx);
+
+    // Wait until both the task queue is empty and no thread is running a task
+    cond.wait(lock, [this]() {
+        return tasks.empty() && inUseThreads == 0;
+    });
+
+    // Signal shutdown
+    running = false;
+    cond.notify_all();  // Wake up any idle workers to let them exit
+
+    lock.unlock();
+
+    // Join all threads
+    for (std::thread& t : threads) {
+        if (t.joinable())
+            t.join();
+    }
 
 }
 
@@ -59,6 +67,9 @@ void ThreadPool::workerThread() {
         { 
             std::unique_lock<std::mutex> lock(mx);
             inUseThreads--;
+            if (tasks.empty() && inUseThreads == 0) {
+                cond.notify_all();
+            }
         }
     }
 }
