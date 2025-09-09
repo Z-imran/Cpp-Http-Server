@@ -1,4 +1,4 @@
-# 🛰️ Multithreaded HTTP Server in C++
+# Multithreaded HTTP Server in C++
 
 This project implements a minimal **multithreaded HTTP/1.1 server** in C++ from scratch using POSIX sockets. It supports standard HTTP methods, concurrent client handling via a custom thread pool, and a fully testable interface using a Python testing script.
 
@@ -11,37 +11,37 @@ This project implements a minimal **multithreaded HTTP/1.1 server** in C++ from 
 - Its also just a cool project. 
 
 
-## 🚀 Features
+## Features
 
-- ✅ Serves static files over HTTP (`GET`)
-- ✅ Handles `PUT`, `DELETE`, `HEAD`, and `OPTIONS` methods
-- ✅ Parses valid HTTP/1.1 requests (method, headers, body)
-- ✅ Sends proper status codes and headers (200, 404, 500, etc.)
-- ✅ Asynchronous request handling via custom thread pool
-- ✅ Basic MIME type detection
-- ✅ Fully testable with built-in Python script and ApacheBench
+- Serves static files over HTTP (`GET`)
+- Handles `PUT`, `DELETE`, `HEAD`, and `OPTIONS` methods
+- Parses valid HTTP/1.1 requests (method, headers, body)
+- Sends proper status codes and headers (200, 404, 500, etc.)
+- Asynchronous request handling via custom thread pool
+- Basic MIME type detection
+- Fully testable with built-in Python script and ApacheBench
 
 ---
 
-## ⚙️ Technologies
+## Technologies
 
 - **C++17**
 - **CMake** for build system
 - **POSIX Sockets API**
 - **Multithreading** (`std::thread`, `std::mutex`, `std::condition_variable`)
 
-## 📊 Performance Benchmarks
+## Performance Benchmarks
 
 Performance testing was done using [ApacheBench (ab)](https://httpd.apache.org/docs/2.4/programs/ab.html) on the `trial.html` file. Below are results for single, moderate, and high concurrency levels.
 
-### 🔬 Test Setup
+### Test Setup
 - **Machine**: Localhost (macOS, ARM64)
 - **Server**: C++ HTTP server with custom thread pool (10 threads)
 - **Client**: ApacheBench 2.3
 
 ---
 
-### 🧪 Benchmark Results
+### Benchmark Results
 
 | Test Case                     | Requests | Concurrency | Time Taken | Req/sec | Time/Req (ms) | Transfer Rate |
 |------------------------------|----------|-------------|------------|---------|----------------|----------------|
@@ -51,7 +51,7 @@ Performance testing was done using [ApacheBench (ab)](https://httpd.apache.org/d
 
 ---
 
-### ⏱ Connection Time Breakdown (High Concurrency)
+### Connection Time Breakdown (High Concurrency)
 
 | Stage       | Min | Mean | Max |
 |-------------|-----|------|-----|
@@ -61,11 +61,11 @@ Performance testing was done using [ApacheBench (ab)](https://httpd.apache.org/d
 
 ---
 
-### 📝 Observations
+### Observations
 
-- ✅ The server handled 500 concurrent requests with **0 failures** and < 6ms mean processing time.
-- ✅ Shows excellent scalability due to custom thread pool.
-- ✅ Minimal connection latency with increasing load.
+- The server handled 500 concurrent requests with **0 failures** and < 6ms mean processing time.
+- Shows excellent scalability due to custom thread pool.
+- Minimal connection latency with increasing load.
 
 
 ## Resources
